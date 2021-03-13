@@ -1,26 +1,75 @@
 import './App.css';
 import React, { useState } from 'react'
-import Modal from './Modal'
-
+import ModalChildren from './ModalChildren'
 
 function App() {
 
   const [showModal, setShowModal] = useState(false)
-  const [name, setName] = useState('')
-  const [number, setNumber] = useState('')
-  const [amount, setAmount] = useState('')
-  const [policeis, setPolicies] = useState([{name: 'josh', mobile: '1234567890', amount: '20$'}])
 
-  const handleSubmit =(e) =>{
+  const [firstName, setFirstName] = useState('')
+  const [firstNameError, setFirstNameError ] = useState('')
+
+  const [lastName, setLastName] = useState('')
+  const [lastNameError, setLastNameError] = useState('')
+
+  const [mobile, setMobile] = useState('')
+  const [mobileError, setMobileError] = useState('')
+
+  const [amount, setAmount] = useState('')
+  const [amountError, setAmountError] = useState('')
+
+  const [policies, setPolicies] = useState([])
+
+  const handleSubmit =(e) => {
     e.preventDefault()
+    if(validation()){
     const formData = {
-      name: name,
-      number: number,
+      firstName: firstName,
+      lastName: lastName,
+      mobile: mobile,
       amount: amount
     }
-    // handleSubmit(formData)
-    console.log('form', formData)
-    modalClose();
+    // don't do this
+    // const currentPolicies = policies;
+    // currentPolicies.push(formData);
+
+    // do this
+    setPolicies(prevState => {
+      return [...prevState, formData]
+      })
+      modalClose();
+    }
+  } 
+   
+
+  const validation = () => {
+    let isValid = true;
+    setFirstNameError('')
+    setLastNameError('')
+    setMobileError('')
+    setAmountError('')
+    if(!firstName) {
+      setFirstNameError('Please enter a first name')
+      isValid = false
+    }
+    if(!lastName) {
+      setLastNameError('Please enter a last name')
+      isValid = false
+    }
+    if(!mobile.length) {
+      setMobileError('Please enter mobile number')
+      isValid = false;
+    } else if(mobile.length != 10 ) {
+      setMobileError('enter a valid mobile number')
+      isValid = false;
+    }
+    if(!amount.length) {
+      setAmountError('please enter a policy amount')
+    } else if(amount > 35) {
+      setAmountError('Policy can only be of $35 and less')
+      isValid = false;
+    }
+    return isValid
   }
 
   const modalOpen = () => {
@@ -35,69 +84,50 @@ function App() {
     <div className="App">
       <h1>Policies</h1>
       <br />
-      <div>
-      <table class="table">
-        <thead class="thead-dark">
+      {policies.length != 0 ? (<div>
+      <table className="table">
+        <thead className="thead-dark">
           <tr>
             <th scope="col">#</th>
-            <th scope="col">Name</th>
+            <th scope="col">First Name</th>
+            <th scope="col">Last Name</th>
             <th scope="col">Mobile</th>
             <th scope="col">Amount</th>
           </tr>
         </thead>
         <tbody>
-          <tr>
-            <th scope="row">1</th>
-            <td>Dany</td>
-            <td>9638527417</td>
-            <td>45</td>
-          </tr>
+          {
+            policies.map((policy, index) => {
+             return ( 
+             <tr>
+                <th scope="row" key={function uniqueID() {
+                  return Math.floor(Math.random() * Date.now())
+                  }}>{index + 1}</th>
+                <td>{policy.firstName}</td>
+                <td>{policy.lastName}</td>
+                <td>{policy.mobile}</td>
+                <td>{ '$ ' + policy.amount}</td>
+              </tr>
+             )
+            })
+          }
         </tbody>
       </table>
-      </div>
-      <div className="App" className="container">
+      </div>) : null}
+      <div className="container" className="col-md">
         <button type="button" class="btn btn-secondary" href="javascript:;" onClick={e => modalOpen(e)} >
           Create policy
         </button>
         
-        <Modal show={showModal} handleClose={e => modalClose(e)} align="center">
-          <div className="bg-primary w-25 p-3 justify-content-between">
-          <h2>Hey there!</h2>
-          <div className="form-group">
-            <label>Enter Details</label>
-            <input
-              placeholder="Name"
-              type="text"
-              name="name"
-              value={name}
-              onChange={e => setName(e.target.value)}
-              className="form-control"
-            />
-            <input
-              type="text"
-              name="number"
-              onChange={e => setNumber(e.target.value)}
-              className="form-control"
-            />
-             <input
-              type="text"
-              name="number"
-              onChange={e => setAmount(e.target.value)}
-              className="form-control"
-            />
-          </div>
-          <div className="form-group">
-            <button onClick={handleSubmit}> 
-              Save
-            </button>
-          </div>
-          <div className="form-group">
-            <button onClick={modalClose}> 
-              cancel
-            </button>
-          </div>
-          </div>
-        </Modal>
+        <ModalChildren 
+          showModal={showModal} modalClose={modalClose} 
+          setFirstName={setFirstName} firstNameError={firstNameError}
+          setLastName={setLastName}  lastNameError={lastNameError}
+          setMobile={setMobile}  mobileError={mobileError}
+          setAmount={setAmount} amountError={amountError}
+          handleSubmit={handleSubmit}
+        />
+       
       </div>
    </div>
   );
