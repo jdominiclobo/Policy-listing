@@ -1,6 +1,6 @@
 import "./App.css";
 import React, { useState, useEffect } from "react";
-import ModalChildren from "./ModalChildren";
+import ModalChildren from "./CreatePolicy/ModalChildren";
 
 function App() {
   const [showModal, setShowModal] = useState(false);
@@ -24,7 +24,15 @@ function App() {
   const [id, setId] = useState("");
 
   useEffect(() => {
+    const data = localStorage.getItem("policies");
+    if (data) {
+      setPolicies(JSON.parse(data));
+    }
+  }, []);
+
+  useEffect(() => {
     console.log("policies", policies);
+    localStorage.setItem("policies", JSON.stringify(policies));
   }, [policies]);
 
   const handleSubmit = (e) => {
@@ -149,14 +157,35 @@ function App() {
 
   return (
     <div className="App">
-      <nav className="navbar navbar-expand-lg navbar-light bg-light">
-        <a className="navbar-brand" href="#">
-          <h1>Policies</h1>
+      <nav className="navbar navbar-expand-lg navbar-dark bg-dark justify-content-between">
+        <a className="navbar-brand " href="#">
+          <h1>POLICIES</h1>
         </a>
+        <div>
+          <button
+            type="button"
+            class="btn btn-danger btn-lg"
+            href="javascript:;"
+            onClick={(e) => {
+              setOperation("save");
+              modalOpen(e);
+            }}
+          >
+            Create policy
+          </button>
+          {"         "}
+          <button
+            type="button"
+            class="btn btn-danger btn-lg"
+            href="javascript:;"
+          >
+            Claim Policy
+          </button>
+        </div>
       </nav>
       <br />
       {policies.length != 0 ? (
-        <div>
+        <div className="container">
           <table className="table">
             <thead className="thead-dark">
               <tr>
@@ -211,18 +240,6 @@ function App() {
         </div>
       ) : null}
       <div className="container" className="col-md">
-        <button
-          type="button"
-          class="btn btn-danger btn-lg"
-          href="javascript:;"
-          onClick={(e) => {
-            setOperation("save");
-            modalOpen(e);
-          }}
-        >
-          Create policy
-        </button>
-
         <ModalChildren
           showModal={showModal}
           modalClose={modalClose}

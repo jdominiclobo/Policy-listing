@@ -6,9 +6,8 @@ function ModalChildren(props) {
     <div>
       <Modal show={props.showModal} handleClose={(e) => props.modalClose(e)}>
         <div className="bg-warning mx-auto">
-          <h2>Hey there!</h2>
-          <div className="form-group">
-            <label>Enter Details</label>
+          <div className="form-group" style={{ align: "center" }}>
+            <h1>Enter details</h1>
             <input
               placeholder="First Name"
               type="text"
@@ -49,26 +48,25 @@ function ModalChildren(props) {
             />
             <p style={{ color: "red" }}>{props.amountError}</p>
             <br />
-          </div>
-          {props.operation === "save" ? (
+            {props.operation === "save" ? (
+              <div className="form-group">
+                <button class="btn btn-danger " onClick={props.handleSubmit}>
+                  Save
+                </button>
+              </div>
+            ) : (
+              <div className="form-group">
+                {console.log(props.operation)}
+                <button class="btn btn-danger " onClick={props.handleEdit}>
+                  update
+                </button>
+              </div>
+            )}
             <div className="form-group">
-              <button class="btn btn-danger " onClick={props.handleSubmit}>
-                Save
+              <button class="btn btn-danger" onClick={props.modalClose}>
+                Cancel
               </button>
             </div>
-          ) : (
-            <div className="form-group">
-              {console.log(props.operation)}
-              <button class="btn btn-danger " onClick={props.handleEdit}>
-                update
-              </button>
-            </div>
-          )}
-
-          <div className="form-group">
-            <button class="btn btn-danger" onClick={props.modalClose}>
-              cancel
-            </button>
           </div>
         </div>
       </Modal>
